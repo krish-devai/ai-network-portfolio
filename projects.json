@@ -19,14 +19,26 @@
     "details": "This project moves from hardcoded router output to real text files. It reads multiple files, parses them independently, and combines the results into one health report. This is a strong foundation for later building AI-assisted NOC tools.",
     "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80"
   },
-  {
-    "id": 3,
-    "title": "AI Roadmap for Network Engineers",
-    "category": "Career Branding",
-    "description": "Visual project showing the evolution from Networking → Automation → Data → AI → Intelligent Networks for modern engineers.",
-    "stack": ["AI", "Networking", "LinkedIn Branding"],
-    "outcome": "Used for personal branding and thought leadership posts.",
-    "details": "This project communicates the future path for network engineers by showing a practical progression from networking fundamentals to AI-enabled operations.",
-    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
-  }
+{
+  "id": 3,
+  "title": "AI Roadmap for Network Engineers",
+  "category": "Career Roadmap",
+  "description": "A visual roadmap outlining the journey from networking fundamentals to AI-driven intelligent network operations.",
+  "stack": ["Networking", "Automation", "Data", "AI/ML"],
+  "outcome": "Created a clear learning path for network engineers transitioning into AI and intelligent networking.",
+  "details": "This project defines a structured career path for network engineers transitioning into AI-driven networking. 
+
+Stage 1: Networking Foundation — Build strong expertise in TCP/IP, routing, switching, BGP, MPLS, SD-WAN, and network security. Understanding protocols and real-world troubleshooting is critical.
+
+Stage 2: Automation — Learn Python and network automation tools such as APIs (REST/JSON), Netmiko, NAPALM, and Ansible to automate repetitive tasks like configuration, validation, and monitoring.
+
+Stage 3: Data — Work with network telemetry, logs, and time-series data. Focus on parsing CLI outputs, log analysis, and building dashboards for visibility.
+
+Stage 4: AI & Machine Learning — Learn ML basics and apply them to networking use cases such as anomaly detection, traffic prediction, and intelligent alerting.
+
+Stage 5: Intelligent Networks — Move towards self-healing and AI-driven networks with automated decision-making, capacity planning, and predictive operations.
+
+This roadmap bridges traditional networking with modern AI-driven operations and provides a practical learning path for engineers aiming to become network architects or AI-focused network specialists."
+  "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
+}
 ]
