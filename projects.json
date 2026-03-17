@@ -1,22 +1,32 @@
 [
   {
     "id": 1,
-    "title": "Network Health Check Script",
-    "category": "Automation",
-    "description": "Python script to detect BGP issues, CPU spikes, and interface errors.",
-    "stack": ["Python", "Networking"],
-    "outcome": "Automated network monitoring and alert generation",
-    "details": "Parses router outputs and identifies BGP neighbor issues, high CPU usage, and CRC errors.",
-    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31"
+    "title": "AI Network Health Checker",
+    "category": "Python + Networking",
+    "description": "Parses router outputs such as show bgp summary, show processes cpu, and interface status to detect BGP issues, high CPU, CRC errors, and down interfaces.",
+    "stack": ["Python", "CLI Parsing", "Network Automation"],
+    "outcome": "Built a mini NOC-style automation workflow for health reporting.",
+    "details": "This project reads CLI-style router outputs and checks for BGP Active state, high CPU utilization, CRC errors, and down interfaces. It uses Python basics such as split(), strip(), loops, and conditions to build a practical monitoring script for network engineers.",
+    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80"
   },
   {
     "id": 2,
-    "title": "BGP Anomaly Detection",
-    "category": "AI + Networking",
-    "description": "Detect abnormal BGP behavior using simple logic.",
-    "stack": ["Python", "AI"],
-    "outcome": "Identifies unstable neighbors",
-    "details": "Analyzes BGP summary output and flags anomalies.",
-    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475"
+    "title": "Router Output File Analyzer",
+    "category": "Automation Project",
+    "description": "Reads saved router output files such as bgp.txt, cpu.txt, and interface.txt, then generates a consolidated health summary automatically.",
+    "stack": ["Python", "Monitoring", "Text Parsing"],
+    "outcome": "Converted manual CLI review into repeatable automation.",
+    "details": "This project moves from hardcoded router output to real text files. It reads multiple files, parses them independently, and combines the results into one health report. This is a strong foundation for later building AI-assisted NOC tools.",
+    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "id": 3,
+    "title": "AI Roadmap for Network Engineers",
+    "category": "Career Branding",
+    "description": "Visual project showing the evolution from Networking → Automation → Data → AI → Intelligent Networks for modern engineers.",
+    "stack": ["AI", "Networking", "LinkedIn Branding"],
+    "outcome": "Used for personal branding and thought leadership posts.",
+    "details": "This project communicates the future path for network engineers by showing a practical progression from networking fundamentals to AI-enabled operations.",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
   }
 ]
