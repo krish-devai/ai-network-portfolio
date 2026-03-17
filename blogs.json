@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Day 1 - Network Automation",
+    "type": "Learning Note",
+    "summary": "Started learning Python for networking.",
+    "content": "Learned basic parsing and automation concepts."
+  },
+  {
+    "title": "BGP Monitoring Basics",
+    "type": "Technical",
+    "summary": "Understanding BGP states and issues.",
+    "content": "Explained Active state and troubleshooting."
+  }
+]
