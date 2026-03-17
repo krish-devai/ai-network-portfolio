@@ -21,6 +21,9 @@
   <h3>Outcome</h3>
   <p id="outcome"></p>
 
+  <a id="downloadCodeBtn" class="btn btn-secondary hidden" download>Download Code</a>
+  <a id="downloadTextBtn" class="btn btn-secondary hidden" download>Download Report</a>
+
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const id = parseInt(urlParams.get('id'));
@@ -41,6 +44,19 @@
         document.getElementById('details').innerHTML = project.details;
         document.getElementById('outcome').innerText = project.outcome;
         document.getElementById('image').src = project.image;
+
+        const codeBtn = document.getElementById('downloadCodeBtn');
+      const textBtn = document.getElementById('downloadTextBtn');
+
+      if (project.codeFile) {
+        codeBtn.href = project.codeFile;
+        codeBtn.classList.remove('hidden');
+      }
+
+      if (project.textFile) {
+        textBtn.href = project.textFile;
+        textBtn.classList.remove('hidden');
+      }
       });
   </script>
 
