@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Project Details</title>
+</head>
+
+<body style="font-family: Arial; padding: 30px;">
+
+  <a href="index.html">← Back to Portfolio</a>
+
+  <h1 id="title"></h1>
+  <p id="category"></p>
+
+  <img id="image" style="width:400px; margin:10px 0;">
+
+  <p id="description"></p>
+
+  <h3>Details</h3>
+  <p id="details"></p>
+
+  <h3>Outcome</h3>
+  <p id="outcome"></p>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = parseInt(urlParams.get('id'));
+
+    fetch('projects.json')
+      .then(res => res.json())
+      .then(data => {
+        const project = data.find(p => p.id === id);
+
+        if (!project) {
+          document.body.innerHTML = "<h2>Project not found</h2>";
+          return;
+        }
+
+        document.getElementById('title').innerText = project.title;
+        document.getElementById('category').innerText = project.category;
+        document.getElementById('description').innerText = project.description;
+        document.getElementById('details').innerText = project.details;
+        document.getElementById('outcome').innerText = project.outcome;
+        document.getElementById('image').src = project.image;
+      });
+  </script>
+
+</body>
+</html>
