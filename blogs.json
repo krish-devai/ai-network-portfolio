@@ -1,14 +1,8 @@
 [
   {
-    "title": "Day 1 - Network Automation",
+    "title": "My First Python Script for Network Monitoring",
     "type": "Learning Note",
-    "summary": "Started learning Python for networking.",
-    "content": "Learned basic parsing and automation concepts."
-  },
-  {
-    "title": "BGP Monitoring Basics",
-    "type": "Technical",
-    "summary": "Understanding BGP states and issues.",
-    "content": "Explained Active state and troubleshooting."
+    "summary": "A beginner lab on parsing router outputs for BGP, CPU, and interface issues.",
+    "content": "I built a small Python script to read router outputs and print a health summary. This helped me understand split(), strip(), loops, and basic automation logic for network engineering use cases."
   }
 ]
