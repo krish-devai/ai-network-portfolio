@@ -19,26 +19,14 @@
     "details": "This project moves from hardcoded router output to real text files. It reads multiple files, parses them independently, and combines the results into one health report. This is a strong foundation for later building AI-assisted NOC tools.",
     "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80"
   },
-{
-  "id": 3,
-  "title": "AI Roadmap for Network Engineers",
-  "category": "Career Roadmap",
-  "description": "A visual roadmap outlining the journey from networking fundamentals to AI-driven intelligent network operations.",
-  "stack": ["Networking", "Automation", "Data", "AI/ML"],
-  "outcome": "Created a clear learning path for network engineers transitioning into AI and intelligent networking.",
-  "details": "This project defines a structured career path for network engineers transitioning into AI-driven networking.<br><br>
-
-<strong>Stage 1: Networking Foundation</strong> — Build strong expertise in TCP/IP, routing, switching, BGP, MPLS, SD-WAN, and network security. Understanding protocols and real-world troubleshooting is critical.<br><br>
-
-<strong>Stage 2: Automation</strong> — Learn Python and network automation tools such as APIs (REST/JSON), Netmiko, NAPALM, and Ansible to automate repetitive tasks like configuration, validation, and monitoring.<br><br>
-
-<strong>Stage 3: Data</strong> — Work with network telemetry, logs, and time-series data. Focus on parsing CLI outputs, log analysis, and building dashboards for visibility.<br><br>
-
-<strong>Stage 4: AI & Machine Learning</strong> — Learn ML basics and apply them to networking use cases such as anomaly detection, traffic prediction, and intelligent alerting.<br><br>
-
-<strong>Stage 5: Intelligent Networks</strong> — Move towards self-healing and AI-driven networks with automated decision-making, capacity planning, and predictive operations.<br><br>
-
-This roadmap bridges traditional networking with modern AI-driven operations and provides a practical learning path for engineers aiming to become network architects or AI-focused network specialists.",
-  "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
-}
+  {
+    "id": 3,
+    "title": "AI Roadmap for Network Engineers",
+    "category": "Career Roadmap",
+    "description": "A visual roadmap outlining the journey from networking fundamentals to AI-driven intelligent network operations.",
+    "stack": ["Networking", "Automation", "Data", "AI/ML"],
+    "outcome": "Created a clear learning path for network engineers transitioning into AI and intelligent networking.",
+    "details": "This project defines a structured career path for network engineers transitioning into AI-driven networking.<br><br><strong>Stage 1: Networking Foundation</strong> — Build strong expertise in TCP/IP, routing, switching, BGP, MPLS, SD-WAN, and network security. Understanding protocols and real-world troubleshooting is critical.<br><br><strong>Stage 2: Automation</strong> — Learn Python and network automation tools such as APIs (REST/JSON), Netmiko, NAPALM, and Ansible to automate repetitive tasks like configuration, validation, and monitoring.<br><br><strong>Stage 3: Data</strong> — Work with network telemetry, logs, and time-series data. Focus on parsing CLI outputs, log analysis, and building dashboards for visibility.<br><br><strong>Stage 4: AI & Machine Learning</strong> — Learn ML basics and apply them to networking use cases such as anomaly detection, traffic prediction, and intelligent alerting.<br><br><strong>Stage 5: Intelligent Networks</strong> — Move towards self-healing and AI-driven networks with automated decision-making, capacity planning, and predictive operations.<br><br>This roadmap bridges traditional networking with modern AI-driven operations and provides a practical learning path for engineers aiming to become network architects or AI-focused network specialists.",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
+  }
 ]
