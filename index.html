@@ -625,7 +625,9 @@ fetch('blogs.json')
             <div class="stack">${project.stack.map(item => `<span>${item}</span>`).join('')}</div>
             <div class="outcome"><strong>Outcome:</strong> ${project.outcome}</div>
             <div class="card-links">
-              <a class="btn btn-secondary" href="#project-details" onclick="showProjectDetails(${project.id})">View Details</a>
+              <a class="btn btn-secondary" href="project.html?id=${project.id}">
+  View Details
+</a>
             </div>
           </div>
         `;
