@@ -2,27 +2,80 @@
 <html>
 <head>
   <title>Project Details</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 30px;
+      background: #f9fafb;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      margin-right: 10px;
+      padding: 10px 15px;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    img {
+      width: 400px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #111827;
+    }
+
+    h3 {
+      margin-top: 20px;
+      color: #374151;
+    }
+  </style>
 </head>
 
-<body style="font-family: Arial; padding: 30px;">
+<body>
 
-  <a href="index.html">← Back to Portfolio</a>
+  <div class="container">
 
-  <h1 id="title"></h1>
-  <p id="category"></p>
+    <a href="index.html">← Back to Portfolio</a>
 
-  <img id="image" style="width:400px; margin:10px 0;">
+    <h1 id="title"></h1>
+    <p id="category"></p>
 
-  <p id="description"></p>
+    <img id="image">
 
-  <h3>Details</h3>
-  <p id="details"></p>
+    <p id="description"></p>
 
-  <h3>Outcome</h3>
-  <p id="outcome"></p>
+    <h3>Details</h3>
+    <p id="details"></p>
 
-  <a id="downloadCodeBtn" class="btn btn-secondary hidden" download>Download Code</a>
-  <a id="downloadTextBtn" class="btn btn-secondary hidden" download>Download Report</a>
+    <h3>Outcome</h3>
+    <p id="outcome"></p>
+
+    <br>
+
+    <!-- Download Buttons -->
+    <a id="downloadCodeBtn" class="btn hidden" download>Download Code</a>
+
+  </div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -38,6 +91,7 @@
           return;
         }
 
+        // Set content
         document.getElementById('title').innerText = project.title;
         document.getElementById('category').innerText = project.category;
         document.getElementById('description').innerText = project.description;
@@ -45,18 +99,14 @@
         document.getElementById('outcome').innerText = project.outcome;
         document.getElementById('image').src = project.image;
 
+        // Download buttons
         const codeBtn = document.getElementById('downloadCodeBtn');
-      const textBtn = document.getElementById('downloadTextBtn');
+        const textBtn = document.getElementById('downloadTextBtn');
 
-      if (project.codeFile) {
-        codeBtn.href = project.codeFile;
-        codeBtn.classList.remove('hidden');
-      }
-
-      if (project.textFile) {
-        textBtn.href = project.textFile;
-        textBtn.classList.remove('hidden');
-      }
+        if (project.codeFile) {
+          codeBtn.href = project.codeFile;
+          codeBtn.classList.remove('hidden');
+        }
       });
   </script>
 
