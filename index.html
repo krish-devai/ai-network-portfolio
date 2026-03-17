@@ -548,48 +548,24 @@
     let aboutContent = `I am Krishna Kumar, with 10+ years of experience in network design, routing, and security.
 Currently expanding into automation and AI-driven networking to build intelligent, scalable, and high-performance network solutions.`;
 
-    const projects = [
-      {
-        id: 1,
-        title: 'AI Network Health Checker',
-        category: 'Python + Networking',
-        description: 'Parses router outputs such as show bgp summary, show processes cpu, and interface status to detect BGP issues, high CPU, CRC errors, and down interfaces.',
-        stack: ['Python', 'CLI Parsing', 'Network Automation'],
-        outcome: 'Built a mini NOC-style automation workflow for health reporting.',
-        details: 'This project reads CLI-style router outputs and checks for BGP Active state, high CPU utilization, CRC errors, and down interfaces. It uses Python basics such as split(), strip(), loops, and conditions to build a practical monitoring script for network engineers.',
-        image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80'
-      },
-      {
-        id: 2,
-        title: 'Router Output File Analyzer',
-        category: 'Automation Project',
-        description: 'Reads saved router output files such as bgp.txt, cpu.txt, and interface.txt, then generates a consolidated health summary automatically.',
-        stack: ['Python', 'Monitoring', 'Text Parsing'],
-        outcome: 'Converted manual CLI review into repeatable automation.',
-        details: 'This project moves from hardcoded router output to real text files. It reads multiple files, parses them independently, and combines the results into one health report. This is a strong foundation for later building AI-assisted NOC tools.',
-        image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80'
-      },
-      {
-        id: 3,
-        title: 'AI Roadmap for Network Engineers',
-        category: 'Career Branding',
-        description: 'Visual project showing the evolution from Networking → Automation → Data → AI → Intelligent Networks for modern engineers.',
-        stack: ['AI', 'Networking', 'LinkedIn Branding'],
-        outcome: 'Used for personal branding and thought leadership posts.',
-        details: 'This project communicates the future path for network engineers by showing a practical progression from networking fundamentals to AI-enabled operations. It is useful for LinkedIn content, career positioning, and personal brand building.',
-        image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80'
-      }
-    ];
+   let projects = [];
+let blogs = [];
 
-    const blogs = [
-      {
-        title: 'My First Python Script for Network Monitoring',
-        type: 'Learning Note',
-        
-        summary: 'A beginner lab on parsing router outputs for BGP, CPU, and interface issues.',
-        content: 'I built a small Python script to read router outputs and print a health summary. This helped me understand split(), strip(), loops, and basic automation logic for network engineering use cases.'
-      }
-    ];
+// Load projects
+fetch('projects.json')
+  .then(response => response.json())
+  .then(data => {
+    projects = data;
+    renderProjects();
+  });
+
+// Load blogs
+fetch('blogs.json')
+  .then(response => response.json())
+  .then(data => {
+    blogs = data;
+    renderBlogs();
+  });
 
     function openLogin() {
       document.getElementById('loginOverlay').classList.remove('hidden');
@@ -836,8 +812,6 @@ Currently expanding into automation and AI-driven networking to build intelligen
       document.getElementById('aboutText').innerText = newText;
     }
 
-    renderProjects();
-    renderBlogs();
     updateRoleUI();
   </script>
 </body>
