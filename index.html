@@ -103,7 +103,6 @@
     .btn-secondary { background: rgba(255,255,255,0.8); color: #1f2937; }
 
     .login-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-    .demo-creds { margin-top: 16px; font-size: 13px; color: var(--muted); line-height: 1.7; }
     .error-text { color: #dc2626; font-size: 14px; margin-top: 12px; }
 
     .topbar {
@@ -225,9 +224,31 @@
     .section h2 { margin: 0 0 10px; font-size: 30px; color: #0f172a; }
     .section p.lead { color: #4b5563; margin: 0 0 28px; line-height: 1.7; }
 
+    .portfolio-section {
+      background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portfolio-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.82);
+      z-index: 0;
+    }
+
+    .portfolio-section .container {
+      position: relative;
+      z-index: 1;
+    }
+
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; }
 
-    .feature-card, .card, .blog-card, .editor-box, .detail-panel {
+    .feature-card, .card, .blog-card, .editor-box {
       background: rgba(255,255,255,0.88);
       border: 1px solid rgba(37,99,235,0.12);
       border-radius: 24px;
@@ -274,11 +295,6 @@
     .blog-card { padding: 20px; }
     .blog-card h3 { margin: 0 0 10px; color: #0f172a; }
     .blog-card p { color: #374151; line-height: 1.7; }
-
-    .detail-panel { padding: 26px; margin-top: 28px; }
-    .detail-panel h3 { margin-top: 0; font-size: 28px; color: #0f172a; }
-    .detail-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    .detail-panel p { color: #374151; line-height: 1.8; }
 
     footer {
       border-top: 1px solid rgba(37,99,235,0.08);
@@ -373,19 +389,19 @@
           </div>
           <div class="visual-card">
             <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=300&q=80" alt="Automation Visual" />
-            <h3>DATA</h3>
+            <h3>Data</h3>
             <p>Work with network telemetry, logs, and time-series data to gain operational insights.</p>
           </div>
           <div class="visual-card">
             <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=300&q=80" alt="Project Visual" />
             <h3>AI & ML</h3>
             <p>Apply machine learning for anomaly detection, traffic prediction, and intelligent analysis.</p>
-          </div>    
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section portfolio-section">
       <div class="container">
         <h2>Portfolio Overview</h2>
         <p class="lead">A structured view of my work in networking, automation, and AI, focused on building real-world, intelligent network solutions.</p>
@@ -400,7 +416,7 @@
           </div>
           <div class="feature-card">
             <h3>Project Details</h3>
-            <p>Each project includes a detail link that opens a dedicated details panel with full explanation.</p>
+            <p>Each project includes a detail link that opens a dedicated details page with full explanation.</p>
           </div>
         </div>
       </div>
@@ -461,8 +477,8 @@
 
     <section class="section" id="blog">
       <div class="container">
-        <h2>Blog / Project Updates </h2>
-        <p class="lead">Published Blog and project updates for AI + networking.</p>
+        <h2>Blog / Project Updates</h2>
+        <p class="lead">Published blog and project updates for AI + networking.</p>
         <div class="blog-list" id="blogList"></div>
 
         <div id="blogEditor" class="editor-box hidden">
@@ -537,24 +553,22 @@
     let aboutContent = `I am Krishna Kumar, with 10+ years of experience in network design, routing, and security.
 Currently expanding into automation and AI-driven networking to build intelligent, scalable, and high-performance network solutions.`;
 
-   let projects = [];
-let blogs = [];
+    let projects = [];
+    let blogs = [];
 
-// Load projects
-fetch('projects.json')
-  .then(response => response.json())
-  .then(data => {
-    projects = data;
-    renderProjects();
-  });
+    fetch('projects.json')
+      .then(response => response.json())
+      .then(data => {
+        projects = data;
+        renderProjects();
+      });
 
-// Load blogs
-fetch('blogs.json')
-  .then(response => response.json())
-  .then(data => {
-    blogs = data;
-    renderBlogs();
-  });
+    fetch('blogs.json')
+      .then(response => response.json())
+      .then(data => {
+        blogs = data;
+        renderBlogs();
+      });
 
     function openLogin() {
       document.getElementById('loginOverlay').classList.remove('hidden');
@@ -612,9 +626,7 @@ fetch('blogs.json')
             <h3>${project.title}</h3>
             <div class="outcome"><strong>Outcome:</strong> ${project.outcome}</div>
             <div class="card-links">
-              <a class="btn btn-secondary" href="project.html?id=${project.id}">
-  View Details
-</a>
+              <a class="btn btn-secondary" href="project.html?id=${project.id}">View Details</a>
             </div>
           </div>
         `;
@@ -702,19 +714,6 @@ fetch('blogs.json')
       } else {
         applySave('https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=1200&q=80');
       }
-    }
-
-    function showProjectDetails(id) {
-      const project = projects.find(item => item.id === id);
-      if (!project) return;
-      document.getElementById('detailPanel').innerHTML = `
-        <div class="badge">${project.category}</div>
-        <h3>${project.title}</h3>
-        <div class="detail-meta">${project.stack.map(item => `<span class="badge">${item}</span>`).join('')}</div>
-        <p><strong>Project Summary:</strong> ${project.description}</p>
-        <p><strong>Detailed Explanation:</strong> ${project.details}</p>
-        <p><strong>Outcome:</strong> ${project.outcome}</p>
-      `;
     }
 
     function renderBlogs() {
