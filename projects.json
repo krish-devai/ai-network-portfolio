@@ -21,13 +21,14 @@
     "codeFile": "files/NOC_summary.py"
   },
   {
-    "id": 3,
-    "title": "Router Output File Analyzer",
-    "category": "Automation Project",
-    "description": "Reads saved router output files such as bgp.txt, cpu.txt, and interface.txt, then generates a consolidated health summary automatically.",
-    "stack": ["Python", "Monitoring", "Text Parsing"],
-    "outcome": "Converted manual CLI review into repeatable automation.",
-    "details": "This project moves from hardcoded router output to real text files.",
-    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80"
-  }
+  "id": 3,
+  "title": "BGP Anomaly Detector",
+  "category": "Python + Networking + Automation",
+  "description": "Parses BGP summary output, stores snapshots, and detects anomalies such as neighbor state changes, prefix drops, and new or missing peers.",
+  "stack": ["Python", "CLI Parsing", "JSON", "Network Automation"],
+  "outcome": "Built a mini monitoring system that simulates real NOC behavior by detecting BGP issues automatically using snapshot comparison.",
+  "details": "This project analyzes BGP CLI outputs and compares network states over time to identify anomalies.<br><br><strong>Features:</strong><br>- Detects BGP neighbor state changes (Established → Idle/Active)<br>- Identifies prefix drops or sudden increase<br>- Detects new or missing BGP peers<br>- Supports snapshot-based comparison for continuous monitoring<br><br><strong>Approach:</strong><br>- Parses CLI output using Python (split, strip, regex)<br>- Converts parsed data into structured dictionary<br>- Saves snapshots in JSON format<br>- Compares current snapshot with previous snapshot<br>- Generates alerts based on detected anomalies<br><br><strong>Output:</strong><br>- Parsed BGP Data (structured)<br>- Snapshot JSON files<br>- Anomaly Alerts (BGP Down, Prefix Drop, Peer Change)<br>- Overall Status: STABLE / UNSTABLE",
+  "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
+  "codeFile": "files/bgp_anomaly_detector.py"
+}
 ]
