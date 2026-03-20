@@ -17,7 +17,7 @@
     "stack": ["Python", "CLI Parsing", "Network Automation"],
     "outcome": "Built a mini NOC-style automation workflow for health reporting.",
     "details": "This project analyzes router CLI outputs to detect key network health issues.<br><br><strong>Features:</strong><br>- Detects BGP neighbors in Active state<br>- Identifies high CPU utilization<br>- Finds CRC errors on interfaces<br>- Detects interface down events<br><br><strong>Approach:</strong><br>- Uses Python string parsing (split, strip)<br>- Iterates through CLI output line by line<br>- Tracks interface context for accurate error mapping<br>- Generates a summary report for NOC operations<br><br><strong>Output:</strong><br>- Network Health Report<br>- Issue Summary (BGP, CRC, Interface, CPU)<br>- Overall Status: HEALTHY / UNHEALTHY",
-    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
+    "image": "images/AI Basic Network Health Checker.png",
     "codeFile": "files/NOC_summary.py"
   },
   {
