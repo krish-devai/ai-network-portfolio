@@ -1,0 +1,854 @@
+BGP ANOMALY DETECTOR - FULL TEXT GUIDE WITH PHASE EXPLANATION
+================================================================
+
+Project Goal
+------------
+Build a Python project that:
+- Parses BGP summary output
+- Extracts neighbor details
+- Saves snapshots as JSON
+- Compares old vs new state
+- Detects anomalies such as:
+  - neighbor down
+  - prefix drop
+  - new peer
+  - missing peer
+  - established but zero prefixes
+  - low uptime after reset
+
+Recommended approach
+--------------------
+For the first version, do not connect to live routers yet.
+Start with saved text files from command output.
+That is the easiest and best way to learn.
+
+PHASE 0 - WHAT YOU WILL BUILD FIRST
+-----------------------------------
+Version 1 should do only this:
+1. Read one saved file containing show ip bgp summary
+2. Parse the neighbors
+3. Save parsed output as JSON
+4. Read previous JSON snapshot or previous parsed state
+5. Compare current vs previous
+6. Print anomalies
+
+That alone is already a real project.
+
+PHASE 1 - PREPARE YOUR MAC
+--------------------------
+Step 1: Check Python
+    python3 --version
+
+Step 2: Check Homebrew
+    brew --version
+
+Step 3: Create project folder
+    mkdir ~/bgpwatch
+    cd ~/bgpwatch
+
+Step 4: Create virtual environment
+    python3 -m venv venv
+    source venv/bin/activate
+
+Step 5: Upgrade pip
+    pip install --upgrade pip
+
+Step 6: Install basic package
+    pip install pyyaml
+
+Project structure
+-----------------
+bgpwatch/
+├── venv/
+├── config/
+├── parsers/
+│   └── bgp_summary_parser.py
+├── reports/
+│   └── reporter.py
+├── storage/
+│   └── snapshot_manager.py
+├── samples/
+├── detector.py
+└── main.py
+
+Create folders and files
+------------------------
+mkdir config parsers storage reports samples
+touch main.py
+touch parsers/bgp_summary_parser.py
+touch reports/reporter.py
+touch storage/snapshot_manager.py
+touch detector.py
+
+PHASE 2 - CREATE SAMPLE BGP INPUT FILE
+--------------------------------------
+Create this file:
+    samples/bgp_summary_1.txt
+
+Paste:
+BGP router identifier 10.10.10.1, local AS number 65001
+BGP table version is 15, main routing table version 15
+3 network entries using 420 bytes of memory
+3 path entries using 240 bytes of memory
+2/2 BGP path/bestpath attribute entries using 320 bytes of memory
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+192.0.2.1       4 64501   12590   12110       15    0    0 2d17h    850
+198.51.100.1    4 64502     120     100       15    0    0 00:03:12 0
+203.0.113.1     4 64503   22100   22090       15    0    0 5d11h    910
+
+PHASE 3 - LEARN WHAT YOU NEED TO PARSE
+--------------------------------------
+From each neighbor line, you need:
+- neighbor IP
+- remote AS
+- messages received
+- messages sent
+- uptime
+- state or prefix count
+
+In Cisco BGP summary:
+- if BGP is established, last column is usually a number = prefixes received
+- if not established, last column may be text like Idle, Active, Connect
+
+So your parser must handle both.
+
+PHASE 4 - WRITE THE PARSER
+--------------------------
+File: parsers/bgp_summary_parser.py
+
+Code:
+import re
+from datetime import datetime
+
+
+def parse_bgp_summary(file_path: str) -> dict:
+    data = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "source_file": file_path,
+        "router_id": None,
+        "local_as": None,
+        "neighbors": {}
+    }
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    # Parse router ID and local AS
+    for line in lines:
+        router_match = re.search(
+            r"BGP router identifier (\S+), local AS number (\d+)", line
+        )
+        if router_match:
+            data["router_id"] = router_match.group(1)
+            data["local_as"] = int(router_match.group(2))
+            break
+
+    # Parse neighbor table
+    header_found = False
+
+    for line in lines:
+        if "Neighbor" in line and "State/PfxRcd" in line:
+            header_found = True
+            continue
+
+        if not header_found:
+            continue
+
+        line = line.strip()
+        if not line:
+            continue
+
+        parts = line.split()
+        if len(parts) < 10:
+            continue
+
+        neighbor_ip = parts[0]
+        version = parts[1]
+        remote_as = parts[2]
+        msg_rcvd = parts[3]
+        msg_sent = parts[4]
+        uptime = parts[8]
+        state_or_prefix = parts[9]
+
+        if state_or_prefix.isdigit():
+            state = "Established"
+            prefix_received = int(state_or_prefix)
+        else:
+            state = state_or_prefix
+            prefix_received = 0
+
+        data["neighbors"][neighbor_ip] = {
+            "version": int(version),
+            "remote_as": int(remote_as),
+            "msg_received": int(msg_rcvd),
+            "msg_sent": int(msg_sent),
+            "uptime": uptime,
+            "state": state,
+            "prefix_received": prefix_received,
+        }
+
+    return data
+
+Phase explanation
+-----------------
+- import re:
+  imports regular expression tools used to extract router ID and local AS
+- import datetime:
+  adds timestamp to each parsed snapshot
+- data dictionary:
+  creates a structured container for parsed output
+- readlines():
+  loads all lines of the file into a list
+- first for loop:
+  searches for the router identifier and local AS line
+- header_found:
+  starts parsing only after the BGP neighbor table header
+- strip():
+  removes spaces and newline characters
+- split():
+  breaks a row into columns
+- len(parts) < 10:
+  skips incomplete lines
+- continue:
+  skips current loop iteration and moves to next line
+- break:
+  stops the loop once router ID and AS are found
+- state_or_prefix:
+  if numeric -> BGP is Established and value is prefix count
+  if text -> state is Idle, Active, Connect, etc.
+
+Expected parsed output
+----------------------
+{
+    "timestamp": "...",
+    "source_file": "samples/bgp_summary_1.txt",
+    "router_id": "10.10.10.1",
+    "local_as": 65001,
+    "neighbors": {
+        "192.0.2.1": {
+            "version": 4,
+            "remote_as": 64501,
+            "msg_received": 12590,
+            "msg_sent": 12110,
+            "uptime": "2d17h",
+            "state": "Established",
+            "prefix_received": 850
+        }
+    }
+}
+
+PHASE 5 - TEST THE PARSER
+-------------------------
+File: main.py
+
+Code:
+from parsers.bgp_summary_parser import parse_bgp_summary
+
+
+def main():
+    file_path = "samples/bgp_summary_1.txt"
+    parsed_data = parse_bgp_summary(file_path)
+
+    print("Parsed BGP Data:")
+    print(parsed_data)
+
+
+if __name__ == "__main__":
+    main()
+
+Run:
+    python main.py
+
+Expected behavior
+-----------------
+- Reads sample file
+- Parses router ID, local AS, and neighbors
+- Prints Python dictionary output
+
+PHASE 6 - SAVE SNAPSHOT AS JSON
+-------------------------------
+Purpose
+-------
+Parsed data in memory disappears after the program ends.
+JSON lets us store the network state permanently.
+
+File: storage/snapshot_manager.py
+
+Code:
+import json
+import os
+
+
+def save_snapshot(snapshot: dict, file_path: str) -> None:
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(snapshot, f, indent=4)
+
+
+def load_snapshot(file_path: str) -> dict:
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+Phase explanation
+-----------------
+- import json:
+  used to save and load data in JSON format
+- import os:
+  used to create folders if they do not exist
+- save_snapshot():
+  writes parsed dictionary to JSON file
+- load_snapshot():
+  reads JSON file back into Python dictionary
+- indent=4:
+  makes JSON readable
+
+Update main.py to save snapshot
+-------------------------------
+from parsers.bgp_summary_parser import parse_bgp_summary
+from storage.snapshot_manager import save_snapshot
+
+
+def main():
+    file_path = "samples/bgp_summary_1.txt"
+    parsed_data = parse_bgp_summary(file_path)
+
+    save_snapshot(parsed_data, "storage/current_snapshot.json")
+
+    print("Snapshot saved successfully.")
+    print(parsed_data)
+
+
+if __name__ == "__main__":
+    main()
+
+Run:
+    python main.py
+
+Result:
+Creates:
+    storage/current_snapshot.json
+
+PHASE 7 - CREATE SECOND SNAPSHOT FOR COMPARISON
+-----------------------------------------------
+Create:
+    samples/bgp_summary_2.txt
+
+Paste:
+BGP router identifier 10.10.10.1, local AS number 65001
+BGP table version is 19, main routing table version 19
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+192.0.2.1       4 64501   12650   12180       19    0    0 00:02:10 Idle
+198.51.100.1    4 64502     160     130       19    0    0 00:01:15 220
+203.0.113.1     4 64503   22250   22110       19    0    0 5d12h    905
+
+What changed
+------------
+- 192.0.2.1: Established -> Idle
+- 192.0.2.1: 850 -> 0 prefixes
+- 198.51.100.1: 0 -> 220 prefixes
+- 203.0.113.1: mostly stable
+
+PHASE 8 - BUILD ANOMALY DETECTOR
+--------------------------------
+Purpose
+-------
+This is the brain of the project.
+It compares previous and current state and identifies abnormal behavior.
+
+File: detector.py
+
+Code:
+def detect_anomalies(previous: dict, current: dict) -> list:
+    anomalies = []
+
+    previous_neighbors = previous.get("neighbors", {})
+    current_neighbors = current.get("neighbors", {})
+
+    for neighbor_ip, current_data in current_neighbors.items():
+        prev_data = previous_neighbors.get(neighbor_ip)
+
+        if not prev_data:
+            anomalies.append({
+                "severity": "INFO",
+                "neighbor": neighbor_ip,
+                "message": "New neighbor detected"
+            })
+            continue
+
+        prev_state = prev_data.get("state")
+        curr_state = current_data.get("state")
+
+        prev_prefix = prev_data.get("prefix_received", 0)
+        curr_prefix = current_data.get("prefix_received", 0)
+
+        # Neighbor down
+        if prev_state == "Established" and curr_state != "Established":
+            anomalies.append({
+                "severity": "CRITICAL",
+                "neighbor": neighbor_ip,
+                "message": f"State changed from {prev_state} to {curr_state}"
+            })
+
+        # Prefix drop
+        if prev_prefix > 0:
+            drop_percent = ((prev_prefix - curr_prefix) / prev_prefix) * 100
+            if drop_percent >= 50:
+                anomalies.append({
+                    "severity": "CRITICAL",
+                    "neighbor": neighbor_ip,
+                    "message": f"Prefix count dropped from {prev_prefix} to {curr_prefix} ({drop_percent:.1f}% drop)"
+                })
+            elif drop_percent >= 20:
+                anomalies.append({
+                    "severity": "WARN",
+                    "neighbor": neighbor_ip,
+                    "message": f"Prefix count dropped from {prev_prefix} to {curr_prefix} ({drop_percent:.1f}% drop)"
+                })
+
+        # Established but zero prefixes
+        if curr_state == "Established" and curr_prefix == 0:
+            anomalies.append({
+                "severity": "CRITICAL",
+                "neighbor": neighbor_ip,
+                "message": "Neighbor is Established but received 0 prefixes"
+            })
+
+    # Missing neighbors
+    for neighbor_ip in previous_neighbors:
+        if neighbor_ip not in current_neighbors:
+            anomalies.append({
+                "severity": "CRITICAL",
+                "neighbor": neighbor_ip,
+                "message": "Neighbor missing in current snapshot"
+            })
+
+    return anomalies
+
+Phase explanation
+-----------------
+- previous_neighbors/current_neighbors:
+  extracts neighbor dictionaries from both snapshots
+- if not prev_data:
+  identifies a new peer
+- state comparison:
+  detects neighbor down
+- prefix comparison:
+  detects route loss
+- Established with 0 prefixes:
+  suspicious condition
+- missing neighbor loop:
+  detects neighbor removed from current snapshot
+
+PHASE 9 - PRINT REPORT
+----------------------
+File: reports/reporter.py
+
+Code:
+def print_report(anomalies: list) -> None:
+    print("\nBGP Anomaly Report")
+    print("=" * 50)
+
+    if not anomalies:
+        print("No anomalies detected.")
+        return
+
+    for item in anomalies:
+        print(f"[{item['severity']}] Neighbor {item['neighbor']} - {item['message']}")
+
+Phase explanation
+-----------------
+- Prints report title
+- If no issues -> prints no anomalies
+- Else prints each anomaly with severity
+
+PHASE 10 - COMPARE BOTH SNAPSHOTS
+---------------------------------
+File: main.py
+
+Code:
+from parsers.bgp_summary_parser import parse_bgp_summary
+from detector import detect_anomalies
+from reports.reporter import print_report
+
+
+def main():
+    previous_file = "samples/bgp_summary_1.txt"
+    current_file = "samples/bgp_summary_2.txt"
+
+    previous_snapshot = parse_bgp_summary(previous_file)
+    current_snapshot = parse_bgp_summary(current_file)
+
+    anomalies = detect_anomalies(previous_snapshot, current_snapshot)
+    print_report(anomalies)
+
+
+if __name__ == "__main__":
+    main()
+
+Run:
+    python main.py
+
+Expected output
+---------------
+BGP Anomaly Report
+==================================================
+[CRITICAL] Neighbor 192.0.2.1 - State changed from Established to Idle
+[CRITICAL] Neighbor 192.0.2.1 - Prefix count dropped from 850 to 0 (100.0% drop)
+
+PHASE 11 - ADVANCED SINGLE-FILE VERSION
+---------------------------------------
+Purpose
+-------
+A single-file version is useful for download, portfolio, and GitHub.
+
+Below is the full advanced script.
+
+File: bgp_anomaly_detector.py
+
+Code:
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+from dataclasses import dataclass, asdict
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+
+DEFAULT_CONFIG: Dict[str, Any] = {
+    "thresholds": {
+        "prefix_drop_warning_percent": 20.0,
+        "prefix_drop_critical_percent": 50.0,
+        "low_uptime_minutes": 5,
+    },
+    "output": {
+        "pretty_json_indent": 4
+    }
+}
+
+
+@dataclass
+class NeighborData:
+    version: int
+    remote_as: int
+    msg_received: int
+    msg_sent: int
+    uptime: str
+    state: str
+    prefix_received: int
+
+
+@dataclass
+class Anomaly:
+    severity: str
+    neighbor: str
+    message: str
+
+
+def ensure_parent_dir(file_path: str) -> None:
+    parent = os.path.dirname(file_path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+
+def save_json(data: Dict[str, Any], file_path: str, indent: int = 4) -> None:
+    ensure_parent_dir(file_path)
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=indent)
+
+
+def load_json(file_path: str) -> Dict[str, Any]:
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def uptime_to_minutes(uptime: str) -> Optional[int]:
+    uptime = uptime.strip()
+
+    if re.fullmatch(r"\d{2}:\d{2}:\d{2}", uptime):
+        hours, minutes, seconds = map(int, uptime.split(":"))
+        return hours * 60 + minutes + (1 if seconds > 0 else 0)
+
+    if re.fullmatch(r"\d{2}:\d{2}", uptime):
+        minutes, seconds = map(int, uptime.split(":"))
+        return minutes + (1 if seconds > 0 else 0)
+
+    days_match = re.search(r"(\d+)d", uptime)
+    hours_match = re.search(r"(\d+)h", uptime)
+    mins_match = re.search(r"(\d+)m", uptime)
+
+    if days_match or hours_match or mins_match:
+        days = int(days_match.group(1)) if days_match else 0
+        hours = int(hours_match.group(1)) if hours_match else 0
+        minutes = int(mins_match.group(1)) if mins_match else 0
+        return days * 24 * 60 + hours * 60 + minutes
+
+    return None
+
+
+def parse_bgp_summary(file_path: str) -> Dict[str, Any]:
+    data: Dict[str, Any] = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "source_file": file_path,
+        "router_id": None,
+        "local_as": None,
+        "neighbors": {}
+    }
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    for line in lines:
+        router_match = re.search(
+            r"BGP router identifier (\S+), local AS number (\d+)", line
+        )
+        if router_match:
+            data["router_id"] = router_match.group(1)
+            data["local_as"] = int(router_match.group(2))
+            break
+
+    header_found = False
+
+    for line in lines:
+        if "Neighbor" in line and "State/PfxRcd" in line:
+            header_found = True
+            continue
+
+        if not header_found:
+            continue
+
+        line = line.strip()
+        if not line:
+            continue
+
+        parts = line.split()
+        if len(parts) < 10:
+            continue
+
+        neighbor_ip = parts[0]
+        version = parts[1]
+        remote_as = parts[2]
+        msg_rcvd = parts[3]
+        msg_sent = parts[4]
+        uptime = parts[8]
+        state_or_prefix = parts[9]
+
+        if state_or_prefix.isdigit():
+            state = "Established"
+            prefix_received = int(state_or_prefix)
+        else:
+            state = state_or_prefix
+            prefix_received = 0
+
+        neighbor = NeighborData(
+            version=int(version),
+            remote_as=int(remote_as),
+            msg_received=int(msg_rcvd),
+            msg_sent=int(msg_sent),
+            uptime=uptime,
+            state=state,
+            prefix_received=prefix_received,
+        )
+
+        data["neighbors"][neighbor_ip] = asdict(neighbor)
+
+    return data
+
+
+def detect_anomalies(
+    previous: Dict[str, Any],
+    current: Dict[str, Any],
+    config: Dict[str, Any]
+) -> List[Dict[str, str]]:
+    anomalies: List[Anomaly] = []
+
+    thresholds = config["thresholds"]
+    warn_drop = float(thresholds["prefix_drop_warning_percent"])
+    crit_drop = float(thresholds["prefix_drop_critical_percent"])
+    low_uptime_minutes = int(thresholds["low_uptime_minutes"])
+
+    previous_neighbors = previous.get("neighbors", {})
+    current_neighbors = current.get("neighbors", {})
+
+    for neighbor_ip, current_data in current_neighbors.items():
+        prev_data = previous_neighbors.get(neighbor_ip)
+
+        if not prev_data:
+            anomalies.append(
+                Anomaly(
+                    severity="INFO",
+                    neighbor=neighbor_ip,
+                    message="New neighbor detected"
+                )
+            )
+            continue
+
+        prev_state = prev_data.get("state", "Unknown")
+        curr_state = current_data.get("state", "Unknown")
+
+        prev_prefix = int(prev_data.get("prefix_received", 0))
+        curr_prefix = int(current_data.get("prefix_received", 0))
+
+        if prev_state == "Established" and curr_state != "Established":
+            anomalies.append(
+                Anomaly(
+                    severity="CRITICAL",
+                    neighbor=neighbor_ip,
+                    message=f"State changed from {prev_state} to {curr_state}"
+                )
+            )
+
+        if prev_prefix > 0:
+            drop_percent = ((prev_prefix - curr_prefix) / prev_prefix) * 100
+            if drop_percent >= crit_drop:
+                anomalies.append(
+                    Anomaly(
+                        severity="CRITICAL",
+                        neighbor=neighbor_ip,
+                        message=f"Prefix count dropped from {prev_prefix} to {curr_prefix} ({drop_percent:.1f}% drop)"
+                    )
+                )
+            elif drop_percent >= warn_drop:
+                anomalies.append(
+                    Anomaly(
+                        severity="WARN",
+                        neighbor=neighbor_ip,
+                        message=f"Prefix count dropped from {prev_prefix} to {curr_prefix} ({drop_percent:.1f}% drop)"
+                    )
+                )
+
+        if curr_state == "Established" and curr_prefix == 0:
+            anomalies.append(
+                Anomaly(
+                    severity="CRITICAL",
+                    neighbor=neighbor_ip,
+                    message="Neighbor is Established but received 0 prefixes"
+                )
+            )
+
+        uptime_minutes = uptime_to_minutes(current_data.get("uptime", ""))
+        if curr_state == "Established" and uptime_minutes is not None and uptime_minutes < low_uptime_minutes:
+            anomalies.append(
+                Anomaly(
+                    severity="WARN",
+                    neighbor=neighbor_ip,
+                    message=f"Neighbor is Established but uptime is low ({current_data.get('uptime')})"
+                )
+            )
+
+    for neighbor_ip in previous_neighbors:
+        if neighbor_ip not in current_neighbors:
+            anomalies.append(
+                Anomaly(
+                    severity="CRITICAL",
+                    neighbor=neighbor_ip,
+                    message="Neighbor missing in current snapshot"
+                )
+            )
+
+    return [asdict(item) for item in anomalies]
+
+
+def print_report(current_snapshot: Dict[str, Any], anomalies: List[Dict[str, str]]) -> None:
+    print("\n" + "=" * 60)
+    print("BGP ANOMALY DETECTOR REPORT")
+    print("=" * 60)
+    print(f"Source File : {current_snapshot.get('source_file')}")
+    print(f"Router ID   : {current_snapshot.get('router_id')}")
+    print(f"Local AS    : {current_snapshot.get('local_as')}")
+    print(f"Neighbors   : {len(current_snapshot.get('neighbors', {}))}")
+    print(f"Timestamp   : {current_snapshot.get('timestamp')}")
+    print("-" * 60)
+
+    if not anomalies:
+        print("[OK] No anomalies detected.")
+        return
+
+    for item in anomalies:
+        print(f"[{item['severity']}] Neighbor {item['neighbor']} - {item['message']}")
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="BGP Anomaly Detector")
+    parser.add_argument("--current", required=True, help="Path to current BGP summary text file")
+    parser.add_argument("--previous", help="Path to previous snapshot JSON file or previous BGP summary text file")
+    parser.add_argument("--save-current", help="Path to save current parsed snapshot as JSON")
+    parser.add_argument("--output-anomalies", help="Optional path to save anomaly report as JSON")
+    parser.add_argument("--previous-is-json", action="store_true", help="Treat --previous input as a JSON snapshot file")
+    return parser
+
+
+def main() -> None:
+    args = build_arg_parser().parse_args()
+    config = DEFAULT_CONFIG
+
+    current_snapshot = parse_bgp_summary(args.current)
+
+    if args.save_current:
+        save_json(
+            current_snapshot,
+            args.save_current,
+            indent=config["output"]["pretty_json_indent"]
+        )
+
+    anomalies: List[Dict[str, str]] = []
+
+    if args.previous:
+        if args.previous_is_json:
+            previous_snapshot = load_json(args.previous)
+        else:
+            if args.previous.lower().endswith(".json"):
+                previous_snapshot = load_json(args.previous)
+            else:
+                previous_snapshot = parse_bgp_summary(args.previous)
+
+        anomalies = detect_anomalies(previous_snapshot, current_snapshot, config)
+
+    print_report(current_snapshot, anomalies)
+
+    if args.output_anomalies:
+        payload = {
+            "current_snapshot_file": args.current,
+            "anomalies": anomalies,
+            "generated_at": datetime.utcnow().isoformat() + "Z"
+        }
+        save_json(
+            payload,
+            args.output_anomalies,
+            indent=config["output"]["pretty_json_indent"]
+        )
+
+
+if __name__ == "__main__":
+    main()
+
+Run examples
+------------
+Only parse current file:
+    python bgp_anomaly_detector.py --current samples/bgp_summary_2.txt
+
+Compare previous and current:
+    python bgp_anomaly_detector.py --current samples/bgp_summary_2.txt --previous samples/bgp_summary_1.txt
+
+Compare and save snapshot:
+    python bgp_anomaly_detector.py --current samples/bgp_summary_2.txt --previous samples/bgp_summary_1.txt --save-current snapshots/current.json
+
+Compare and save anomaly report:
+    python bgp_anomaly_detector.py --current samples/bgp_summary_2.txt --previous samples/bgp_summary_1.txt --output-anomalies output/anomalies.json
+
+PHASE 12 - WHAT YOU LEARNED
+---------------------------
+By completing this project, you learned:
+- how to parse raw CLI output
+- how to use Python dictionaries
+- how JSON stores network state
+- how snapshots represent state at a point in time
+- how anomaly detection compares states to find problems
+- how to build a mini NOC-style monitoring workflow
+
+End of guide.
