@@ -7,7 +7,7 @@
     "stack": ["Networking", "Automation", "Data", "AI/ML"],
     "outcome": "Created a clear learning path for network engineers transitioning into AI and intelligent networking.",
     "details": "This project defines a structured career path for network engineers transitioning into AI-driven networking.<br><br><strong>Stage 1: Networking Foundation</strong> — Build strong expertise in TCP/IP, routing, switching, BGP, MPLS, SD-WAN, and network security.<br><br><strong>Stage 2: Automation</strong> — Learn Python and tools such as APIs, Netmiko, NAPALM, and Ansible.<br><br><strong>Stage 3: Data</strong> — Work with telemetry, logs, and time-series data.<br><br><strong>Stage 4: AI & Machine Learning</strong> — Apply ML for anomaly detection and traffic prediction.<br><br><strong>Stage 5: Intelligent Networks</strong> — Build self-healing and AI-driven networks.<br><br>This roadmap bridges traditional networking with AI-driven operations.",
-    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
+    "image": "images/AI - ROADMAP-NETWORK ENGINEERS.png"
   },
   {
     "id": 2,
