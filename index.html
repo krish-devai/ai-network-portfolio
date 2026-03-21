@@ -427,7 +427,9 @@
         <h2>Featured Projects</h2>
         <p class="lead">A collection of AI + networking projects, with detail links for deeper project explanations.</p>
         <div class="grid" id="projectGrid"></div>
-
+<div style="text-align:center; margin-top:24px;">
+  <a class="btn btn-primary" href="all-projects.html">More Projects</a>
+</div>
         <div id="projectEditor" class="editor-box hidden">
           <h3>Manage Projects</h3>
           <p class="muted">Admin-only area. Add a new project or edit an existing one.</p>
@@ -616,7 +618,7 @@ Currently expanding into automation and AI-driven networking to build intelligen
     function renderProjects() {
       const grid = document.getElementById('projectGrid');
       grid.innerHTML = '';
-      projects.forEach(project => {
+      projects.slice(0, 4).forEach(project => {
         const card = document.createElement('article');
         card.className = 'card';
         card.innerHTML = `
