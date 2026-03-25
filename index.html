@@ -301,7 +301,7 @@ Currently expanding into automation and AI-driven networking to build intelligen
       }
     }
 
-    function renderBlogs() {
+    function renderBlogs(limit = 3) {
       const list = document.getElementById('blogList');
       list.innerHTML = '';
       if (!blogs.length) {
@@ -309,17 +309,24 @@ Currently expanding into automation and AI-driven networking to build intelligen
         refreshBlogSelect();
         return;
       }
-      blogs.forEach(blog => {
+      const blogsToShow = blogs.slice(0, limit);
+      blogsToShow.forEach((blog, index) => {
         const post = document.createElement('article');
         post.className = 'blog-card';
         post.innerHTML = `
           <div class="badge">${escapeHtml(blog.type || 'Blog Post')}</div>
           <h3>${escapeHtml(blog.title || 'Untitled')}</h3>
-          ${blog.image ? `<img class="blog-image" src="${blog.image}" alt="${escapeHtml(blog.title || 'Blog image')}" onerror="this.style.display='none'">` : ''}
           <p class="muted">${escapeHtml(blog.summary || '')}</p>
-          <p>${formatMultiline(blog.content || '')}</p>`;
+          <div class="card-links">
+            <a class="btn btn-secondary" href="blog-details.html?id=${index}">View Details</a>
+          </div>`;
         list.appendChild(post);
       });
+      list.innerHTML += `
+        <div style="text-align:center; grid-column: 1/-1;">
+          <a class="btn btn-primary" href="all-blogs.html">View More Blogs</a>
+        </div>
+      `;
       refreshBlogSelect();
     }
 
