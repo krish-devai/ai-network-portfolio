@@ -7,10 +7,10 @@
     "summary": "A structured roadmap outlining the journey from networking fundamentals to AI-driven intelligent network operations.",
     "outcome": "Created a clear learning path for network engineers transitioning into AI and intelligent networking.",
     "content": "This project defines a structured career path for network engineers transitioning into AI-driven networking.<br><br><strong>Stage 1: Networking Foundation</strong> — Build strong expertise in TCP/IP, routing, switching, BGP, MPLS, SD-WAN, and network security.<br><br><strong>Stage 2: Automation</strong> — Learn Python and tools such as APIs, Netmiko, NAPALM, and Ansible.<br><br><strong>Stage 3: Data</strong> — Work with telemetry, logs, and time-series data.<br><br><strong>Stage 4: AI & Machine Learning</strong> — Apply ML for anomaly detection and traffic prediction.<br><br><strong>Stage 5: Intelligent Networks</strong> — Build self-healing and AI-driven networks.<br><br>This roadmap bridges traditional networking with AI-driven operations.",
-    "image": "images/ai-roadmap-network-engineers.png"
+    "image": "images/AI - ROADMAP-NETWORK ENGINEERS.png"
   },
   {
-    "id": 2,
+    "id": 2,images/ai-roadmap-network-engineers.png
     "title": "Understanding Python Projects in 3 Simple Layers",
     "type": "Blog Post",
     "summary": "A beginner-friendly explanation of how Python projects work using a house-building analogy: environment, package manager, and libraries.",
