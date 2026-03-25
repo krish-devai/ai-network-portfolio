@@ -77,12 +77,14 @@
       box-shadow: var(--shadow);
       overflow: hidden;
     }
- .hero-image {
-  width: 100%;
-  height: 320px;
-  object-fit: cover;
-  background: #dbeafe;
-}
+    .hero-image {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      background: #dbeafe;
+      cursor: zoom-in;
+      display: block;
+    }
     .blog-content { padding: 32px; }
     .badge {
       display: inline-block;
@@ -131,6 +133,23 @@
     }
     .content p { margin: 0 0 18px; }
     .content strong { color: #0f172a; }
+
+    .article-image-wrap {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .article-image-full {
+      width: min(700px, 100%);
+      height: auto;
+      object-fit: contain;
+      border-radius: 16px;
+      border: 1px solid rgba(37,99,235,0.12);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      background: #f8fbff;
+      display: block;
+    }
+
     .footer-actions {
       display: flex;
       gap: 12px;
@@ -148,11 +167,39 @@
       color: var(--muted);
     }
     .error-box { color: #b91c1c; }
+
+    .image-modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      padding: 40px 20px;
+    }
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 95%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    .close-modal {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      color: white;
+      font-size: 36px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
     @media (max-width: 640px) {
       .topbar-inner { flex-direction: column; align-items: flex-start; }
       .hero-image { height: 220px; }
       .blog-content { padding: 22px; }
       .summary, .content { font-size: 16px; }
+      .modal-content { max-width: 96%; max-height: 85vh; }
     }
   </style>
 </head>
@@ -177,6 +224,11 @@
       <div id="blogDetails" class="loading">Loading blog details...</div>
     </div>
   </main>
+
+  <div id="imageModal" class="image-modal">
+    <span class="close-modal">&times;</span>
+    <img class="modal-content" id="modalImage" alt="Expanded cover image" />
+  </div>
 
   <script>
     function escapeHtml(text = '') {
@@ -235,7 +287,15 @@
 
         const blog = blogs[id];
         const imageHtml = blog.image
-          ? `<img class="hero-image" src="${blog.image}" alt="${escapeHtml(blog.title || 'Blog image')}" onerror="this.style.display='none'">`
+          ? `<img class="hero-image zoomable-cover" src="${blog.image}" alt="${escapeHtml(blog.title || 'Blog image')}" onerror="this.style.display='none'">`
+          : '';
+
+        const articleImageHtml = blog.image
+          ? `
+            <div class="article-image-wrap">
+              <img class="article-image-full" src="${blog.image}" alt="${escapeHtml(blog.title || 'Blog image')}" onerror="this.style.display='none'">
+            </div>
+          `
           : '';
 
         container.className = 'blog-shell';
@@ -256,6 +316,8 @@
               ${normalizeBlogContent(blog.content || '')}
             </div>
 
+            ${articleImageHtml}
+
             <div class="footer-actions">
               <a class="btn btn-primary" href="all-blogs.html">View More Blogs</a>
               <a class="back-btn" href="index.html#blog">Back to Home</a>
@@ -274,6 +336,21 @@
         `;
       }
     }
+
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('zoomable-cover')) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        modal.style.display = 'block';
+        modalImg.src = e.target.src;
+      }
+    });
+
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('close-modal') || e.target.id === 'imageModal') {
+        document.getElementById('imageModal').style.display = 'none';
+      }
+    });
 
     renderBlogDetails();
   </script>
