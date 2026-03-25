@@ -1,33 +1,350 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Blog Details</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Details - AI + Networking</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #eef5ff;
+      --panel: rgba(255,255,255,0.95);
+      --panel-border: rgba(37,99,235,0.12);
+      --text: #111827;
+      --muted: #4b5563;
+      --primary: #2563eb;
+      --primary-soft: rgba(37,99,235,0.08);
+      --shadow: 0 18px 50px rgba(37,99,235,0.12);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(96,165,250,0.18), transparent 24%),
+        radial-gradient(circle at 90% 10%, rgba(37,99,235,0.12), transparent 18%),
+        linear-gradient(180deg, #f7fbff 0%, #eef5ff 50%, #e6f0ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(37,99,235,0.08);
+    }
+
+    .container {
+      width: min(980px, 92%);
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #374151;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+
+    .nav-links a:hover {
+      background: rgba(37,99,235,0.08);
+      color: #111827;
+    }
+
+    .page-wrap {
+      padding: 42px 0 60px;
+    }
+
+    .back-row {
+      margin-bottom: 18px;
+    }
+
+    .back-btn, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid rgba(37,99,235,0.12);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .back-btn:hover, .btn:hover { transform: translateY(-1px); }
+
+    .back-btn {
+      background: rgba(255,255,255,0.88);
+      color: #1f2937;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+
+    .blog-shell {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      display: block;
+      background: #dbeafe;
+    }
+
+    .blog-content {
+      padding: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(37,99,235,0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(37,99,235,0.1);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.1;
+      color: #0f172a;
+    }
+
+    .summary {
+      font-size: 18px;
+      line-height: 1.8;
+      color: var(--muted);
+      margin: 0 0 22px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: var(--primary-soft);
+      border: 1px solid rgba(37,99,235,0.10);
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+    }
+
+    .meta-pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f8fbff;
+      border: 1px solid rgba(37,99,235,0.12);
+      font-size: 13px;
+      color: #1f2937;
+    }
+
+    .content {
+      font-size: 17px;
+      line-height: 1.95;
+      color: #111827;
+    }
+
+    .content p {
+      margin: 0 0 18px;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(37,99,235,0.10);
+    }
+
+    .loading, .error-box {
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(37,99,235,0.12);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      color: var(--muted);
+    }
+
+    .error-box {
+      color: #b91c1c;
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-image {
+        height: 220px;
+      }
+
+      .blog-content {
+        padding: 22px;
+      }
+
+      .summary, .content {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">AI + Networking</div>
+      <nav class="nav-links">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#blog">Blogs</a>
+        <a href="all-blogs.html">All Blogs</a>
+      </nav>
+    </div>
+  </header>
 
-<div id="blogDetails"></div>
+  <main class="page-wrap">
+    <div class="container">
+      <div class="back-row">
+        <a class="back-btn" href="index.html#blog">⬅ Back to Blogs</a>
+      </div>
 
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+      <div id="blogDetails" class="loading">Loading blog details...</div>
+    </div>
+  </main>
 
-  fetch('blogs.json')
-    .then(res => res.json())
-    .then(data => {
-      const blog = data[id];
+  <script>
+    const fallbackBlogs = [
+      {
+        title: "My First Python Script for Network Monitoring",
+        type: "Learning Note",
+        summary: "A beginner lab on parsing router outputs for BGP, CPU, and interface issues.",
+        content: "I built a small Python script to read router outputs and print a health summary. This helped me understand split(), strip(), loops, and basic automation logic for network engineering use cases."
+      },
+      {
+        title: "Understanding Python Projects in 3 Simple Layers",
+        type: "Blog Post",
+        summary: "A beginner-friendly explanation of how Python projects work using a house-building analogy: environment, package manager, and libraries.",
+        image: "images/building-python.png",
+        content: "When I started learning Python for network automation, I realized that running a Python project is not just about writing code. There is a structure behind it.\n\n🏗️ Think of a Python project like building your own house\n\n🔹 Environment (venv) → Your land / workspace\nIt keeps your project isolated and avoids conflicts with other projects.\nCommands:\npython3 -m venv venv\nsource venv/bin/activate\n\n🔹 Package Manager (pip) → Your tool store\nInstalls and manages libraries. You go there to download what your project needs.\nCommand:\npip install --upgrade pip\n\n🔹 Libraries (pyyaml, netmiko) → Your tools & materials\nEach library solves a specific problem.\n- pyyaml → Read YAML files\n- netmiko → Network automation\nCommand:\npip install pyyaml\n\n🧠 No land → nowhere to build\n🧰 No tool store → nothing gets done\n🧱 No tools/materials → no functionality\n\n🚀 Master these 3 layers and you can build any Python project confidently, especially in network automation."
+      }
+    ];
 
-      document.getElementById("blogDetails").innerHTML = `
-        <h1>${blog.title}</h1>
-        <p><strong>${blog.type}</strong></p>
-        <p>${blog.summary}</p>
-        <hr>
-        <p>${blog.content.replace(/\\n/g, "<br>")}</p>
+    function escapeHtml(text = '') {
+      return text
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
 
-        <br><br>
-        <a href="index.html">⬅ Back</a>
+    function formatContent(text = '') {
+      return escapeHtml(text)
+        .split(/\n\n+/)
+        .map(block => `<p>${block.replace(/\n/g, '<br>')}</p>`)
+        .join('');
+    }
+
+    async function loadBlogs() {
+      try {
+        const response = await fetch('blogs.json');
+        if (!response.ok) throw new Error('Failed to load blogs.json');
+        return await response.json();
+      } catch (error) {
+        console.error(error);
+        return fallbackBlogs;
+      }
+    }
+
+    async function renderBlogDetails() {
+      const container = document.getElementById('blogDetails');
+      const params = new URLSearchParams(window.location.search);
+      const id = Number(params.get('id'));
+      const blogs = await loadBlogs();
+
+      if (Number.isNaN(id) || !blogs[id]) {
+        container.className = 'error-box';
+        container.innerHTML = `
+          <h2>Blog not found</h2>
+          <p>The requested blog does not exist or the link is invalid.</p>
+          <div class="footer-actions">
+            <a class="btn btn-primary" href="all-blogs.html">View All Blogs</a>
+            <a class="back-btn" href="index.html#blog">Back to Home</a>
+          </div>
+        `;
+        return;
+      }
+
+      const blog = blogs[id];
+      const imageHtml = blog.image
+        ? `<img class="hero-image" src="${blog.image}" alt="${escapeHtml(blog.title || 'Blog image')}" onerror="this.style.display='none'">`
+        : '';
+
+      container.className = 'blog-shell';
+      container.innerHTML = `
+        ${imageHtml}
+        <div class="blog-content">
+          <div class="badge">${escapeHtml(blog.type || 'Blog Post')}</div>
+          <h1>${escapeHtml(blog.title || 'Untitled Blog')}</h1>
+          <p class="summary">${escapeHtml(blog.summary || '')}</p>
+
+          <div class="meta-row">
+            <div class="meta-pill">Readable blog layout</div>
+            <div class="meta-pill">Full content view</div>
+            <div class="meta-pill">AI + Networking</div>
+          </div>
+
+          <div class="content">
+            ${formatContent(blog.content || '')}
+          </div>
+
+          <div class="footer-actions">
+            <a class="btn btn-primary" href="all-blogs.html">View More Blogs</a>
+            <a class="back-btn" href="index.html#blog">Back to Home</a>
+          </div>
+        </div>
       `;
-    });
-</script>
+    }
 
+    renderBlogDetails();
+  </script>
 </body>
 </html>
