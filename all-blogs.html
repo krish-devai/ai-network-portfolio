@@ -1,33 +1,368 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>All Blogs</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Blogs - AI + Networking</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --text: #111827;
+      --muted: #4b5563;
+      --primary: #2563eb;
+      --panel: rgba(255,255,255,0.92);
+      --panel-border: rgba(37,99,235,0.12);
+      --shadow: 0 18px 50px rgba(37,99,235,0.12);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(96,165,250,0.18), transparent 24%),
+        radial-gradient(circle at 90% 10%, rgba(37,99,235,0.12), transparent 18%),
+        linear-gradient(180deg, #f7fbff 0%, #eef5ff 50%, #e6f0ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(37,99,235,0.08);
+    }
+
+    .container {
+      width: min(1180px, 92%);
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #374151;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+
+    .nav-links a:hover {
+      background: rgba(37,99,235,0.08);
+      color: #111827;
+    }
+
+    .hero {
+      padding: 42px 0 26px;
+    }
+
+    .hero-shell {
+      background: linear-gradient(135deg, rgba(255,255,255,0.94), rgba(239,246,255,0.95));
+      border: 1px solid rgba(37,99,235,0.12);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(37,99,235,0.1);
+      color: #1d4ed8;
+      border: 1px solid rgba(37,99,235,0.1);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(34px, 5vw, 52px);
+      line-height: 1.08;
+      color: #0f172a;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #4b5563;
+      line-height: 1.8;
+      max-width: 760px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid rgba(37,99,235,0.12);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.88);
+      color: #1f2937;
+    }
+
+    .section {
+      padding: 12px 0 56px;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 30px;
+      color: #0f172a;
+    }
+
+    .section-subtitle {
+      margin: 0 0 28px;
+      color: #4b5563;
+      line-height: 1.7;
+    }
+
+    .blogs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .blog-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .blog-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      background: #dbeafe;
+    }
+
+    .blog-card-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 20px;
+    }
+
+    .blog-card h3 {
+      margin: 0 0 10px;
+      color: #0f172a;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .blog-card p {
+      margin: 0;
+      color: #374151;
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    .blog-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 0 0 14px;
+    }
+
+    .blog-meta span {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(37,99,235,0.12);
+      background: #f8fbff;
+      font-size: 12px;
+      color: #1f2937;
+    }
+
+    .blog-actions {
+      margin-top: auto;
+      padding-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .empty-state {
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.92);
+      border: 1px dashed rgba(37,99,235,0.2);
+      color: #4b5563;
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 700px) {
+      .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-shell {
+        padding: 22px;
+      }
+
+      .blog-card img {
+        height: 200px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">AI + Networking</div>
+      <nav class="nav-links">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#blog">Blogs</a>
+      </nav>
+    </div>
+  </header>
 
-<h1>All Blogs</h1>
-<div id="allBlogs"></div>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-shell">
+        <div class="badge">Blog Library</div>
+        <h1>All Blogs</h1>
+        <p>Explore learning notes, project updates, and technical blogs from my AI + Networking journey. Click any blog to read the full article with complete details.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="index.html#blog">Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<script>
-fetch('blogs.json')
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById("allBlogs");
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Published Blogs</h2>
+      <p class="section-subtitle">A clean view of all blog posts with images, summaries, and direct access to the full article.</p>
+      <div id="allBlogs" class="blogs-grid"></div>
+    </div>
+  </section>
 
-    data.forEach((blog, index) => {
-      const div = document.createElement("div");
+  <script>
+    const fallbackBlogs = [
+      {
+        title: "My First Python Script for Network Monitoring",
+        type: "Learning Note",
+        summary: "A beginner lab on parsing router outputs for BGP, CPU, and interface issues.",
+        content: "I built a small Python script to read router outputs and print a health summary. This helped me understand split(), strip(), loops, and basic automation logic for network engineering use cases."
+      },
+      {
+        title: "Understanding Python Projects in 3 Simple Layers",
+        type: "Blog Post",
+        summary: "A beginner-friendly explanation of how Python projects work using a house-building analogy: environment, package manager, and libraries.",
+        image: "images/building-python-step-by-step.png",
+        content: "When I started learning Python for network automation, I realized that running a Python project is not just about writing code. There is a structure behind it."
+      }
+    ];
 
-      div.innerHTML = `
-        <h3>${blog.title}</h3>
-        <p>${blog.summary}</p>
-        <a href="blog-details.html?id=${index}">View Details</a>
-        <hr>
-      `;
+    function escapeHtml(text = '') {
+      return text
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
 
-      container.appendChild(div);
-    });
-  });
-</script>
+    async function loadBlogs() {
+      try {
+        const response = await fetch('blogs.json');
+        if (!response.ok) throw new Error('Failed to load blogs.json');
+        return await response.json();
+      } catch (error) {
+        console.error(error);
+        return fallbackBlogs;
+      }
+    }
 
+    async function renderAllBlogs() {
+      const container = document.getElementById("allBlogs");
+      const blogs = await loadBlogs();
+
+      if (!blogs.length) {
+        container.innerHTML = '<div class="empty-state">No blogs found. Please make sure <strong>blogs.json</strong> is available and the page is opened through <strong>http://localhost</strong>.</div>';
+        return;
+      }
+
+      blogs.forEach((blog, index) => {
+        const card = document.createElement("article");
+        card.className = "blog-card";
+
+        const image = blog.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80';
+
+        card.innerHTML = `
+          <img src="${image}" alt="${escapeHtml(blog.title || 'Blog image')}" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80'">
+          <div class="blog-card-content">
+            <div class="blog-meta">
+              <span>${escapeHtml(blog.type || 'Blog Post')}</span>
+              <span>${escapeHtml(blog.category || 'AI + Networking')}</span>
+            </div>
+            <h3>${escapeHtml(blog.title || 'Untitled Blog')}</h3>
+            <p>${escapeHtml(blog.summary || '')}</p>
+            <div class="blog-actions">
+              <a class="btn btn-primary" href="blog-details.html?id=${index}">View Details</a>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    renderAllBlogs();
+  </script>
 </body>
 </html>
