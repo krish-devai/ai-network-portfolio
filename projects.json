@@ -1,16 +1,6 @@
 [
   {
     "id": 1,
-    "title": "AI Roadmap for Network Engineers",
-    "category": "Career Roadmap",
-    "description": "A structured roadmap outlining the journey from networking fundamentals to AI-driven intelligent network operations.",
-    "stack": ["Networking", "Automation", "Data", "AI/ML"],
-    "outcome": "Created a clear learning path for network engineers transitioning into AI and intelligent networking.",
-    "details": "This project defines a structured career path for network engineers transitioning into AI-driven networking.<br><br><strong>Stage 1: Networking Foundation</strong> — Build strong expertise in TCP/IP, routing, switching, BGP, MPLS, SD-WAN, and network security.<br><br><strong>Stage 2: Automation</strong> — Learn Python and tools such as APIs, Netmiko, NAPALM, and Ansible.<br><br><strong>Stage 3: Data</strong> — Work with telemetry, logs, and time-series data.<br><br><strong>Stage 4: AI & Machine Learning</strong> — Apply ML for anomaly detection and traffic prediction.<br><br><strong>Stage 5: Intelligent Networks</strong> — Build self-healing and AI-driven networks.<br><br>This roadmap bridges traditional networking with AI-driven operations.",
-    "image": "images/AI - ROADMAP-NETWORK ENGINEERS.png"
-  },
-  {
-    "id": 2,
     "title": "AI Network Health Checker",
     "category": "Python + Networking",
     "description": "Parses router outputs such as show bgp summary, show processes cpu, and interface status to detect BGP issues, high CPU, CRC errors, and down interfaces.",
@@ -21,7 +11,7 @@
     "codeFile": "files/NOC_summary.py"
   },
   {
-  "id": 3,
+  "id": 2,
   "title": "BGP Anomaly Detector",
   "category": "Python + Networking + Automation",
   "description": "Parses BGP summary output, stores snapshots, and detects anomalies such as neighbor state changes, prefix drops, and new or missing peers.",
