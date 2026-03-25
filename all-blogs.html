@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Blogs</title>
+</head>
+<body>
+
+<h1>All Blogs</h1>
+<div id="allBlogs"></div>
+
+<script>
+fetch('blogs.json')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById("allBlogs");
+
+    data.forEach((blog, index) => {
+      const div = document.createElement("div");
+
+      div.innerHTML = `
+        <h3>${blog.title}</h3>
+        <p>${blog.summary}</p>
+        <a href="blog-details.html?id=${index}">View Details</a>
+        <hr>
+      `;
+
+      container.appendChild(div);
+    });
+  });
+</script>
+
+</body>
+</html>
