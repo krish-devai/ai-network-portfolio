@@ -1,13 +1,14 @@
 [
   {
     "id": 1,
-    "title": "My First Python Script for Network Monitoring",
-    "type": "Learning Note",
-    "summary": "A beginner lab on parsing router outputs for BGP, CPU, and interface issues.",
-    "content": "I built a small Python script to read router outputs and print a health summary. This helped me understand split(), strip(), loops, and basic automation logic for network engineering use cases.",
-    "likes": 0,
-    "comments": [],
-    "created_at": "2026-03-15"
+    "title": "AI Roadmap for Network Engineers",
+    "type": "Blog Post",
+    "category": "Career Roadmap",
+    "description": "A structured roadmap outlining the journey from networking fundamentals to AI-driven intelligent network operations.",
+    "stack": ["Networking", "Automation", "Data", "AI/ML"],
+    "outcome": "Created a clear learning path for network engineers transitioning into AI and intelligent networking.",
+    "details": "This project defines a structured career path for network engineers transitioning into AI-driven networking.<br><br><strong>Stage 1: Networking Foundation</strong> — Build strong expertise in TCP/IP, routing, switching, BGP, MPLS, SD-WAN, and network security.<br><br><strong>Stage 2: Automation</strong> — Learn Python and tools such as APIs, Netmiko, NAPALM, and Ansible.<br><br><strong>Stage 3: Data</strong> — Work with telemetry, logs, and time-series data.<br><br><strong>Stage 4: AI & Machine Learning</strong> — Apply ML for anomaly detection and traffic prediction.<br><br><strong>Stage 5: Intelligent Networks</strong> — Build self-healing and AI-driven networks.<br><br>This roadmap bridges traditional networking with AI-driven operations.",
+    "image": "images/AI - ROADMAP-NETWORK ENGINEERS.png"
   },
   {
     "id": 2,
