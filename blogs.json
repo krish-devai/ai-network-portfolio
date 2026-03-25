@@ -10,7 +10,7 @@
     "image": "images/AI - ROADMAP-NETWORK ENGINEERS.png"
   },
   {
-    "id": 2,images/ai-roadmap-network-engineers.png
+    "id": 2,
     "title": "Understanding Python Projects in 3 Simple Layers",
     "type": "Blog Post",
     "summary": "A beginner-friendly explanation of how Python projects work using a house-building analogy: environment, package manager, and libraries.",
