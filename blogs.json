@@ -9,7 +9,7 @@
     "title": "Understanding Python Projects in 3 Simple Layers",
     "type": "Blog Post",
     "summary": "A beginner-friendly explanation of how Python projects work using a house-building analogy: environment, package manager, and libraries.",
-    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
+    "image": "images/Building Python programming step by step.png",
     "content": "When I started learning Python for network automation, I realized that running a Python project is not just about writing code. There is a structure behind it.\n\n🏗️ Think of a Python project like building your own house\n\n🔹 Environment (venv) → Your land / workspace\nIt keeps your project isolated and avoids conflicts with other projects.\nCommands:\npython3 -m venv venv\nsource venv/bin/activate\n\n🔹 Package Manager (pip) → Your tool store\nInstalls and manages libraries. You go there to download what your project needs.\nCommand:\npip install --upgrade pip\n\n🔹 Libraries (pyyaml, netmiko) → Your tools & materials\nEach library solves a specific problem.\n- pyyaml → Read YAML files\n- netmiko → Network automation\nCommand:\npip install pyyaml\n\n🧠 No land → nowhere to build\n🧰 No tool store → nothing gets done\n🧱 No tools/materials → no functionality\n\n🚀 Master these 3 layers and you can build any Python project confidently, especially in network automation."
   }
 ]
